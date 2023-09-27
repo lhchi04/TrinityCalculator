@@ -1,18 +1,26 @@
 package edu.trinity;
 
-import java.util.Stack;
+import java.util.EmptyStackException;
+import java.util.Vector;
 
 public class MyStack<T> {
-    private Stack<T> stack = new Stack<>();
+    private Vector<T> stack = new Vector<>();
+    int top = 0;
     public void push(T hello) {
-        stack.push(hello);
+        stack.add(hello);
+        top++;
     }
 
     public T peek() {
-        return stack.peek();
+        return stack.lastElement();
     }
 
-    public T pop() { return stack.pop(); }
+    public T pop() {
+        if (top == 0) {
+            throw new EmptyStackException();
+        }
+        return stack.remove(--top);
+    }
 
     public boolean isEmpty() {
         return stack.isEmpty();
