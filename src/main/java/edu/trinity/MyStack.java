@@ -1,25 +1,23 @@
 package edu.trinity;
 
 import java.util.EmptyStackException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class MyStack<T> {
-    private Vector<T> stack = new Vector<>();
-    int top = 0;
+    private ArrayList<T> stack = new ArrayList<>();
     public void push(T hello) {
         stack.add(hello);
-        top++;
     }
 
     public T peek() {
-        return stack.lastElement();
+        return stack.get(stack.size()-1);
     }
 
     public T pop() {
-        if (top == 0) {
+        if (stack.isEmpty()) {
             throw new EmptyStackException();
         }
-        return stack.remove(--top);
+        return stack.remove(stack.size()-1);
     }
 
     public boolean isEmpty() {
