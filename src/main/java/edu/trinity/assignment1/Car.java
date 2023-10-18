@@ -1,9 +1,9 @@
-package edu.trinity;
+package edu.trinity.assignment1;
 
 import java.time.Year;
+import java.util.Objects;
 
 public class Car {
-
     private String make;
     private String model;
     private Year year;
