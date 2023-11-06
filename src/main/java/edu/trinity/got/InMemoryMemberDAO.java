@@ -1,6 +1,7 @@
 package edu.trinity.got;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryMemberDAO implements MemberDAO {
     private final Collection<Member> allMembers =
@@ -8,22 +9,28 @@ public class InMemoryMemberDAO implements MemberDAO {
 
     @Override
     public Optional<Member> findById(Long id) {
-        return Optional.empty();
+        return allMembers.stream()
+                .filter(member -> member.id().equals(id))
+                .findAny();
     }
 
     @Override
     public Optional<Member> findByName(String name) {
-        return Optional.empty();
+        return allMembers.stream()
+                .filter(member -> member.name().equals(name))
+                .findAny();
     }
 
     @Override
     public List<Member> findAllByHouse(House house) {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .toList();
     }
 
     @Override
     public Collection<Member> getAll() {
-        return Collections.emptyList();
+        return allMembers;
     }
 
     /**
@@ -31,7 +38,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> startWithSandSortAlphabetically() {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.name().startsWith("S"))
+                .sorted()
+                .toList();
     }
 
     /**
@@ -39,7 +49,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> lannisters_alphabeticallyByName() {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.house().equals(House.LANNISTER))
+                .sorted(Comparator.comparing(Member::name))
+                .toList();
     }
 
     /**
@@ -47,7 +60,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> salaryLessThanAndSortByHouse(double max) {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.salary() < max)
+                .sorted(Comparator.comparing(Member::house))
+                .toList();
     }
 
     /**
@@ -55,7 +71,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> sortByHouseNameThenSortByNameDesc() {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .sorted(Comparator.comparing(Member::house)
+                        .thenComparing(Member::name))
+                .toList();
     }
 
     /**
@@ -63,7 +82,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> houseByDob(House house) {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .sorted(Comparator.comparing(Member::dob))
+                .toList();
     }
 
     /**
@@ -71,7 +93,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<Member> kingsByNameDesc() {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.title().equals(Title.KING))
+                .sorted(Comparator.comparing(Member::name).reversed())
+                .toList();
     }
 
     /**
@@ -79,7 +104,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public double averageSalary() {
-        return 0.0;
+        return allMembers.stream()
+                .mapToDouble(member -> member.salary())
+                .summaryStatistics()
+                .getAverage();
     }
 
     /**
@@ -88,7 +116,11 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public List<String> namesSorted(House house) {
-        return Collections.emptyList();
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .map(Member::name)
+                .sorted()
+                .toList();
     }
 
     /**
@@ -96,6 +128,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public boolean salariesGreaterThan(double max) {
+        List<Member> salary = allMembers.stream()
+                .filter(member -> member.salary() > 100000)
+                .toList();
+        if (!salary.isEmpty()) return true;
         return false;
     }
 
@@ -104,6 +140,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public boolean anyMembers(House house) {
+        List<Member> memberInHouse = allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .toList();
+        if (!memberInHouse.isEmpty()) return true;
         return false;
     }
 
@@ -112,7 +152,9 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public long howMany(House house) {
-        return 0;
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .count();
     }
 
     /**
@@ -120,7 +162,10 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public String houseMemberNames(House house) {
-        return "";
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .map(Member::name)
+                .collect(Collectors.joining(", "));
     }
 
     /**
@@ -128,7 +173,9 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public Optional<Member> highestSalary() {
-        return Optional.empty();
+        return allMembers.stream()
+                .sorted(Comparator.comparing(Member::salary).reversed())
+                .findFirst();
     }
 
     /**
@@ -137,7 +184,8 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public Map<Boolean, List<Member>> royaltyPartition() {
-        return Collections.emptyMap();
+        return allMembers.stream()
+                .collect(Collectors.partitioningBy(member -> member.title().equals(Title.KING) || member.title().equals(Title.QUEEN)));
     }
 
     /**
@@ -145,7 +193,8 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public Map<House, List<Member>> membersByHouse() {
-        return Collections.emptyMap();
+        return allMembers.stream()
+                .collect(Collectors.groupingBy(Member::house));
     }
 
     /**
@@ -154,7 +203,8 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public Map<House, Long> numberOfMembersByHouse() {
-        return Collections.emptyMap();
+        return allMembers.stream()
+                .collect(Collectors.groupingBy(Member::house, Collectors.counting()));
     }
 
     /**
@@ -162,7 +212,20 @@ public class InMemoryMemberDAO implements MemberDAO {
      */
     @Override
     public Map<House, DoubleSummaryStatistics> houseStats() {
-        return Collections.emptyMap();
+        return allMembers.stream()
+                .collect(Collectors.groupingBy(Member::house, Collectors.summarizingDouble(Member::salary)));
+    }
+
+    /**
+     * Find all members in the given House that were born before 1990 and sort them by birthdate
+     */
+    @Override
+    public List<Member> memberBornBefore(House house) {
+        return allMembers.stream()
+                .filter(member -> member.house().equals(house))
+                .filter(member -> member.dob().getYear() < 1990)
+                .sorted(Comparator.comparing(Member::dob))
+                .toList();
     }
 
 }

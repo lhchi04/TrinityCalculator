@@ -212,4 +212,18 @@ public class InMemoryMemberDAOTests {
                         .isCloseTo(66666.66, withinPercentage(0.01))
         );
     }
+
+    @Test
+    public void memberBornBefore() {
+        List<Member> members = dao.memberBornBefore(House.STARK);
+
+        assertThat(members).hasSize(3)
+                .allMatch(member -> member.dob().getYear() < 1990)
+                .allMatch(member -> member.house() == House.STARK);
+
+        assertAll(
+                () -> assertThat(members.get(0).name()).isEqualTo("Eddard"),
+                () -> assertThat(members.get(1).name()).isEqualTo("Catelyn")
+        );
+    }
 }
