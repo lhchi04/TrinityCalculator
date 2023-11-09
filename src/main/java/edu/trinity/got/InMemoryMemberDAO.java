@@ -73,7 +73,7 @@ public class InMemoryMemberDAO implements MemberDAO {
     public List<Member> sortByHouseNameThenSortByNameDesc() {
         return allMembers.stream()
                 .sorted(Comparator.comparing(Member::house)
-                        .thenComparing(Member::name))
+                        .thenComparing(Member::name).reversed())
                 .toList();
     }
 
